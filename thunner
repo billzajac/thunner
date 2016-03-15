@@ -36,7 +36,7 @@ import signal
 
 from Queue import Queue, Empty
 from threading import Thread
-from gmusicapi import Webclient
+from gmusicapi import Mobileclient
 from getpass import getpass
 from operator import itemgetter
 
@@ -60,6 +60,8 @@ def parse_config():
                 words = i.split()
                 if words[0] == 'email':
                     config['email'] = words[1]
+                if words[0] == 'mac':
+                    config['mac'] = words[1]
                 elif words[0] == 'pass':
                     config['pass'] = i.split(' ',1)[1]
                 elif words[0] == 'color':
@@ -104,9 +106,9 @@ def name_colors(colordefs):
         c += 1
     return colormap
 
-def apiinit(email,password):
-    api = Webclient()
-    api.login(email, password)
+def apiinit(email,password,mac):
+    api = Mobileclient()
+    api.login(email, password, mac)
     return api
 
 def scrinit():
@@ -230,7 +232,7 @@ def gen_trees(library):
             if album == "":
                 album_name = "Untitled Album"
             albums_of_artist.append({ "name":album_name,
-                                      "subtree":sorted(tracks,key=itemgetter('track')),
+                                      "subtree":sorted(tracks,key=itemgetter('track_id')),
                                       "subtreeline":0 })
         albums = albums + albums_of_artist
         artists.append({ "name":artist,
@@ -267,7 +269,7 @@ def main():
 
     # handle the login here before curses
     api = None
-    api = apiinit(config['email'],config['pass'])
+    api = apiinit(config['email'],config['pass'],config['mac'])
 
     # Because I'd like to see some umlauts (rather than garbage):
     locale.setlocale(locale.LC_ALL, '')
