@@ -265,6 +265,10 @@ def main():
 
     config = parse_config()
 
+    # handle the login here before curses
+    api = None
+    api = apiinit(config['email'],config['pass'])
+
     # Because I'd like to see some umlauts (rather than garbage):
     locale.setlocale(locale.LC_ALL, '')
     code = locale.getpreferredencoding()
@@ -274,7 +278,6 @@ def main():
     colors = name_colors(config['colors'])
     colormap = config['assignments']
 
-    api = None
     playing = None
     try:
         height, width = scr.getmaxyx()
@@ -283,7 +286,6 @@ def main():
 
         scr.refresh()
 
-        api = apiinit(config['email'],config['pass'])
 
         if not api.is_authenticated():
             print "Credentials were not accepted. Exiting..."
